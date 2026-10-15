@@ -17,6 +17,7 @@ contract TokenFactoryHarness {
     }
 }
 
+/// forge-config: default.fuzz.runs = 1024
 contract KeelpadTest is Test {
     uint256 internal constant SUPPLY = 1_000_000_000 * 10 ** 18;
 
@@ -364,7 +365,7 @@ contract KeelpadTest is Test {
     }
 
     function testFuzz_TransferConservesSupply(address recipient, uint256 rawAmount) public {
-        vm.assume(recipient != address(0));
+        recipient = address(uint160(bound(uint256(uint160(recipient)), 1, type(uint160).max)));
         uint256 amount = bound(rawAmount, 0, SUPPLY);
         vm.prank(deployer);
         assertTrue(token.transfer(recipient, amount));
